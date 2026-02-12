@@ -10,7 +10,9 @@ builder.Services.AddControllers();
 // Configurar SignalR
 builder.Services.AddSignalR();
 
-// Registrar servicio de notificaciones
+// Registrar servicios
+builder.Services.AddSingleton<PushSubscriptionService>();
+builder.Services.AddSingleton<WebPushService>();
 builder.Services.AddSingleton<NotificationService>();
 
 // Configurar CORS para permitir conexiones desde el frontend

@@ -10,6 +10,12 @@ public class NotificationHub : Hub
         await Clients.All.SendAsync("ReceiveNotification", notification);
     }
 
+    public Task UpdateClientState(string state)
+    {
+        Console.WriteLine($"Client {Context.ConnectionId} state: {state}");
+        return Task.CompletedTask;
+    }
+
     public override async Task OnConnectedAsync()
     {
         await base.OnConnectedAsync();

@@ -224,6 +224,45 @@
             padding: 40px 20px;
             font-style: italic;
         }
+
+        .notification-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-control {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 13px;
+            background: #6c757d;
+            border-radius: 4px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-control:hover {
+            background: #5a6268;
+        }
+
+        .btn-control.btn-granted {
+            background: #28a745;
+        }
+
+        .btn-control.btn-granted:hover {
+            background: #218838;
+        }
+
+        .btn-control.btn-denied {
+            background: #dc3545;
+        }
+
+        .btn-control:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -232,6 +271,11 @@
 
         <div id="connection-status" class="status disconnected">
             <span id="status-text">Desconectado</span>
+        </div>
+
+        <div class="notification-controls">
+            <button id="enable-notifications-btn" class="btn-control">Activar notificaciones</button>
+            <button id="enable-push-btn" class="btn-control">Activar Push</button>
         </div>
 
         <div class="grid">
