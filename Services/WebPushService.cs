@@ -53,6 +53,14 @@ public class WebPushService
         });
 
         var subscriptions = _subscriptionService.GetAllSubscriptions().ToList();
+        _logger.LogInformation("Intentando enviar push a {Count} suscripciones", subscriptions.Count);
+        
+        if (subscriptions.Count == 0)
+        {
+            _logger.LogWarning("No hay suscripciones push registradas. Asegurate de activar las notificaciones push en el navegador.");
+            return;
+        }
+
         var expiredEndpoints = new List<string>();
 
         foreach (var sub in subscriptions)
@@ -61,6 +69,7 @@ public class WebPushService
             {
                 var pushSubscription = new PushSubscription(sub.Endpoint, sub.P256dh, sub.Auth);
                 await _pushClient.SendNotificationAsync(pushSubscription, payload, _vapidDetails);
+                _logger.LogInformation("Push notification enviada exitosamente a: {Endpoint}", sub.Endpoint.Substring(0, Math.Min(50, sub.Endpoint.Length)) + "...");
             }
             catch (WebPushException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Gone ||
                                                ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -70,7 +79,7 @@ public class WebPushService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending push to {Endpoint}", sub.Endpoint);
+                _logger.LogError(ex, "Error sending push to {Endpoint}: {Message}", sub.Endpoint, ex.Message);
             }
         }
 

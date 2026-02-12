@@ -37,7 +37,8 @@ public class PushController : ControllerBase
         }
 
         _subscriptionService.AddSubscription(subscription);
-        _logger.LogInformation("New push subscription: {Endpoint}", subscription.Endpoint);
+        _logger.LogInformation("Nueva suscripción push registrada: {Endpoint}", subscription.Endpoint.Substring(0, Math.Min(50, subscription.Endpoint.Length)) + "...");
+        _logger.LogInformation("Total de suscripciones activas: {Count}", _subscriptionService.GetAllSubscriptions().Count());
         return Ok(new { success = true });
     }
 
@@ -52,6 +53,21 @@ public class PushController : ControllerBase
         _subscriptionService.RemoveSubscription(request.Endpoint);
         _logger.LogInformation("Push subscription removed: {Endpoint}", request.Endpoint);
         return Ok(new { success = true });
+    }
+
+    [HttpGet("status")]
+    public IActionResult GetPushStatus()
+    {
+        var subscriptions = _subscriptionService.GetAllSubscriptions().ToList();
+        return Ok(new { 
+            totalSubscriptions = subscriptions.Count,
+            vapidConfigured = !string.IsNullOrEmpty(_webPushService.GetPublicKey()),
+            endpoints = subscriptions.Select(s => new { 
+                endpoint = s.Endpoint.Substring(0, Math.Min(50, s.Endpoint.Length)) + "...",
+                hasAuth = !string.IsNullOrEmpty(s.Auth),
+                hasP256dh = !string.IsNullOrEmpty(s.P256dh)
+            })
+        });
     }
 }
 
